@@ -1,7 +1,28 @@
 import express from 'express';
-const app = express()
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
-const port = 8800
-app.listen(port, ()=>{
-   console.log('listening on port ' + port + ' and connecting to backend. ')
+const app = express()
+dotenv.config()
+
+const connect = async () => {
+   try {
+      mongoose.set('strictQuery', true);
+      mongoose.connect(process.env.MONGO)
+      console.log("Connected to MongoDB.")
+   } catch (error) {
+      throw error
+   }
+};
+
+mongoose.connection.on("disconnected", () => {
+   console.log("mongoDB disconnected")
+});
+mongoose.connection.on("connected", () => {
+   console.log("mongoDB connected")
+})
+
+app.listen(8800, () => {
+   connect();
+   console.log('listening on port 8800 and connecting to backend!')
 })
